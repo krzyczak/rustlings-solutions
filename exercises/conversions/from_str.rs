@@ -28,8 +28,6 @@ enum ParsePersonError {
     ParseInt(ParseIntError),
 }
 
-// I AM NOT DONE
-
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
 // 2. Split the given string on the commas present in it
@@ -45,7 +43,30 @@ enum ParsePersonError {
 
 impl FromStr for Person {
     type Err = ParsePersonError;
+
+    // NOTE: This is a definitve candidate for refactoring.
+    // This code looks horrible! Do we really require so many branches?
+    // Also, I would change the tests/requirements as I do not agree with some of them.
+    // But let's assume for the purpouse of this excercise that they are not supposed to be changed.
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        if !s.contains(",") && s.len() > 1 {
+            return Err(ParsePersonError::BadLen);
+        }
+
+        match s.split_once(',') {
+            Some(("", age)) => Err(ParsePersonError::NoName),
+            Some((name, age)) => match (name.to_string(), age.parse::<usize>()) {
+                (name, Ok(age)) => Ok(Person { name, age }),
+                (_, Err(err)) => {
+                    if age.contains(",") {
+                        Err(ParsePersonError::BadLen)
+                    } else {
+                        Err(ParsePersonError::ParseInt(err))
+                    }
+                }
+            },
+            _ => Err(ParsePersonError::Empty),
+        }
     }
 }
 
