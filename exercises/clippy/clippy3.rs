@@ -9,10 +9,11 @@ fn main() {
     let my_arr = &[-1, -2, -3, -4, -5, -6];
     println!("My array! Here it is: {:?}", my_arr);
 
-    // let my_empty_vec = ;
+    let mut my_empty_vec = vec![1, 2, 3, 4, 5];
+    my_empty_vec.clear();
     println!(
         "This Vec is empty, see? {:?}",
-        vec![1, 2, 3, 4, 5].resize(0, 5)
+        my_empty_vec
     );
 
     let mut value_a = 45;
